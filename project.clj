@@ -1,6 +1,6 @@
 (defproject scramble-exercise "0.1.0-SNAPSHOT"
   :description "Clojure + ClojureScript exercise for scrambling strings"
-  :url "http://example.com"
+  :url "https://github.com/cedward0/scramble-exercise"
   :license {:name "Eclipse Public License"
             :url  "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.10.1"]
