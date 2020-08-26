@@ -2,46 +2,6 @@
   (:require [clojure.test :refer :all]
             [scramble-exercise.scramble :refer :all]))
 
-(defn- api-call
-  "Makes the API call returning the body of response"
-  [str1 str2]
-  {:a ""})
-
-(defn- api-scramble-call-message
-  "Connects to API scramble to get the result of scrambling and displaying it in message element of the page"
-  [str1 str2]
-  (let [body (api-call str1 str2)
-        result (:result body)]
-    (str "Scrambling result for [" str1 "] and [" str2 "] is: " result
-         (if (not result) (str "<br/>" (:message body))))))
-
-
-(deftest scramble?-test
-  (testing "negative"
-    (is (false? (scramble? "katas" "steak")))
-    (is (false? (scramble? "" "")))
-    (is (false? (scramble? "1" "q")))
-    (is (false? (scramble? "a" "_")))
-    (is (false? (scramble? "\\/" "vv")))
-    (is (false? (scramble? "w" "V")))
-    (is (false? (scramble? "" "aaaaaaaaa")))
-    (is (false? (scramble? "sfavdava" "")))
-    (is (false? (scramble? "123123123" "2351523")))
-    (is (false? (scramble? "ASDWCAsdasd" "PVLXV")))
-    (is (false? (scramble? "aaaaa" "aaaaaaaaa")))
-    (is (false? (scramble? " -213sda0/.A" "28s 0)3^=s;OKS"))))
-  (testing "positive"
-    (is (true? (scramble? "rekqodlw" "world")))
-    (is (true? (scramble? "abcdefghijklmnopqrstwxyz" "zyxwtsrqponmlkjihgfedcba")))
-    (is (true? (scramble? "cedewaraaossoqqyt" "codewars")))
-    (is (true? (scramble? "helloworld" "world")))
-    (is (true? (scramble? "listen" "silent")))
-    (is (true? (scramble? "ccccccccccfffffffffkkkkkkkklllllll" "cffkkkllll")))
-    (is (true? (scramble? "cfccccfccffffffllkkkkffkkfkklllcccll" "cffkkkllll")))
-    (is (true? (scramble? "cfcckkccfccffcffffllkkffkkfkklllccll" "cfkllllkkf")))
-    (is (true? (scramble? "todayisthebestdayofmylife" "fomo")))
-    (is (true? (scramble? "qwertyuiopasdfghjklzxcvbnm" "qwertyuiopasdfghjklzxcvbnm")))))
-
 (deftest can-be-scrambled?-regex-test
   (testing "timing regex function"
     (time (#'scramble-exercise.scramble/can-be-scrambled?-regex "a" "a"))
@@ -87,3 +47,67 @@
             (str "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
                  "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
                  "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")))))
+
+(deftest scramble?-test
+  (testing "negative"
+    (is (false? (scramble? "katas" "steak")))
+    (is (false? (scramble? "" "")))
+    (is (false? (scramble? "1" "q")))
+    (is (false? (scramble? "a" "_")))
+    (is (false? (scramble? "\\/" "vv")))
+    (is (false? (scramble? "w" "V")))
+    (is (false? (scramble? "" "aaaaaaaaa")))
+    (is (false? (scramble? "sfavdava" "")))
+    (is (false? (scramble? "123123123" "2351523")))
+    (is (false? (scramble? "ASDWCAsdasd" "PVLXV")))
+    (is (false? (scramble? "aaaaa" "aaaaaaaaa")))
+    (is (false? (scramble? " -213sda0/.A" "28s 0)3^=s;OKS"))))
+  (testing "positive"
+    (is (true? (scramble? "rekqodlw" "world")))
+    (is (true? (scramble? "abcdefghijklmnopqrstwxyz" "zyxwtsrqponmlkjihgfedcba")))
+    (is (true? (scramble? "cedewaraaossoqqyt" "codewars")))
+    (is (true? (scramble? "helloworld" "world")))
+    (is (true? (scramble? "listen" "silent")))
+    (is (true? (scramble? "ccccccccccfffffffffkkkkkkkklllllll" "cffkkkllll")))
+    (is (true? (scramble? "cfccccfccffffffllkkkkffkkfkklllcccll" "cffkkkllll")))
+    (is (true? (scramble? "cfcckkccfccffcffffllkkffkkfkklllccll" "cfkllllkkf")))
+    (is (true? (scramble? "todayisthebestdayofmylife" "fomo")))
+    (is (true? (scramble? "qwertyuiopasdfghjklzxcvbnm" "qwertyuiopasdfghjklzxcvbnm")))))
+
+(deftest scramble?-with-message-test
+  (testing "negative"
+    (is (= {:message "The second string cannot be scrambled from the first string" :result false}
+           (scramble?-with-message "katas" "steak")))
+    (is (= {:message "Both strings are empty" :result false}
+           (scramble?-with-message "" "")))
+    (is (= {:message "[1] does not have only lower case letters" :result false}
+           (scramble?-with-message "1" "q")))
+    (is (= {:message "[_] does not have only lower case letters" :result false}
+           (scramble?-with-message "a" "_")))
+    (is (= {:message "[\\/] does not have only lower case letters" :result false}
+           (scramble?-with-message "\\/" "vv")))
+    (is (= {:message "[V] does not have only lower case letters" :result false}
+           (scramble?-with-message "w" "V")))
+    (is (= {:message "First string is empty" :result false}
+           (scramble?-with-message "" "aaaaaaaaa")))
+    (is (= {:message "Second string is empty" :result false}
+           (scramble?-with-message "sfavdava" "")))
+    (is (= {:message "[123123123] does not have only lower case letters and [2351523] does not have only lower case letters" :result false}
+           (scramble?-with-message "123123123" "2351523")))
+    (is (= {:message "[ASDWCAsdasd] does not have only lower case letters and [PVLXV] does not have only lower case letters" :result false}
+           (scramble?-with-message "ASDWCAsdasd" "PVLXV")))
+    (is (= {:message "The second string cannot be scrambled from the first string" :result false}
+           (scramble?-with-message "aaaaa" "aaaaaaaaa")))
+    (is (= {:message "[ -213sda0/.A] does not have only lower case letters and [28s 0)3^=s;OKS] does not have only lower case letters" :result false}
+           (scramble?-with-message " -213sda0/.A" "28s 0)3^=s;OKS"))))
+  (testing "positive"
+    (is (= {:result true} (scramble?-with-message "rekqodlw" "world")))
+    (is (= {:result true} (scramble?-with-message "abcdefghijklmnopqrstwxyz" "zyxwtsrqponmlkjihgfedcba")))
+    (is (= {:result true} (scramble?-with-message "cedewaraaossoqqyt" "codewars")))
+    (is (= {:result true} (scramble?-with-message "helloworld" "world")))
+    (is (= {:result true} (scramble?-with-message "listen" "silent")))
+    (is (= {:result true} (scramble?-with-message "ccccccccccfffffffffkkkkkkkklllllll" "cffkkkllll")))
+    (is (= {:result true} (scramble?-with-message "cfccccfccffffffllkkkkffkkfkklllcccll" "cffkkkllll")))
+    (is (= {:result true} (scramble?-with-message "cfcckkccfccffcffffllkkffkkfkklllccll" "cfkllllkkf")))
+    (is (= {:result true} (scramble?-with-message "todayisthebestdayofmylife" "fomo")))
+    (is (= {:result true} (scramble?-with-message "qwertyuiopasdfghjklzxcvbnm" "qwertyuiopasdfghjklzxcvbnm")))))

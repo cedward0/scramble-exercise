@@ -73,4 +73,4 @@
     {:result true}
 
     :else
-    {:result false :message "Unknown"}))
+    {:result false :message "The second string cannot be scrambled from the first string"}))

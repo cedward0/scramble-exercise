@@ -12,16 +12,16 @@
 (defroutes routes
            (GET "/" []
              (html5
-               (conj
-                 (view/content-page "ClojureScript is not loaded")
-                 (include-js "/js/main.js"))))
+               (conj (view/content-page "ClojureScript is not loaded")
+                     (include-js "/js/main.js"))))
            (POST "/api/scramble" [str1 str2]
              (response/content-type
-               (do (println (str "Calling scramble? with [" str1 "] and [" str2 "]"))
+               (do (println (str "Calling API scramble? with [" str1 "] and [" str2 "]"))
                    (response/response (scramble/scramble?-with-message str1 str2)))
                "application/json"))
            (not-found
-             (html5 (view/not-found-page))))
+             (html5
+               (view/not-found-page))))
 
 (def app (-> #'routes
              (wrap-defaults (assoc-in site-defaults [:security :anti-forgery] false))

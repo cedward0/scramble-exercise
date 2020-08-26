@@ -16,19 +16,15 @@
   []
   "api/scramble")
 
-(defn- api-call
-  "Makes the API call returning the body of response"
-  [str1 str2]
-  (go (let [response (<! (http/post (api-scrable-url-path) {:form-params {:str1 str1 :str2 str2}}))]
-        (:body response))))
-
 (defn- api-scramble-call-message
   "Connects to API scramble to get the result of scrambling and displaying it in message element of the page"
   [str1 str2]
-  (let [body (api-call str1 str2)
-        result (:result body)]
-    (str "Scrambling result for [" str1 "] and [" str2 "] is: " result
-         (if (not result) (str "<br/>" (:message body))))))
+  (go (let [response (<! (http/post (api-scrable-url-path) {:form-params {:str1 str1 :str2 str2}}))
+            body (:body response)
+            result (:result body)]
+        (update-message
+          (str "Scrambling result for [" str1 "] and [" str2 "] is: " result
+               (if (not result) (str "<br/>" (:message body))))))))
 
 (defn- form-on-submit-override
   "Changes the page form on submit behaviour to call API scramble and to show the result in the same page"
@@ -37,8 +33,7 @@
         -onsubmit
         (fn [e]
           (do (.preventDefault e)
-              (update-message
-                (api-scramble-call-message (dom/get-value (dom/get-element "str1"))
-                                           (dom/get-value (dom/get-element "str2"))))))))
+              (api-scramble-call-message (dom/get-value (dom/get-element "str1"))
+                                         (dom/get-value (dom/get-element "str2")))))))
 
 (form-on-submit-override)
